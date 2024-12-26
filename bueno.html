@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>Armazenar Respostas</title>
+</head>
+<body>
+    <h1>WhatsApp</h1>
+
+    <p>Boa noite, Gusmão!</p>
+    <p>Criei esse site para você me passar o seu telefone. Poderia, por gentileza, me passar o seu número?</p>
+    <p>Prometo que não vou ser tóxico e serei educado, não vou te forçar caso não queira.</p>
+    <br><br>
+    <img src="https://th.bing.com/th?id=OIP.x76y0CGqPb6T5YOeVA-bQgHaG0&w=260&h=239&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" alt="Imagem ilustrativa" width="260">
+    <br><br>
+
+    <!-- Campo para o número -->
+    <div><label for="whatsapp">Digite seu número de WhatsApp:</label></div>
+    <input type="text" id="whatsapp" name="whatsapp" placeholder="Digite o número com DDD (ex: 55999999999)">
+    <br><br>
+
+    <!-- Caixinha de votação -->
+    <label for="situacao">Gostou?</label>
+    <select name="situacao" id="situacao">
+        <option value="sim">Sim, lindo!</option>
+        <option value="nao">Não, sou difícil de agradar</option>
+    </select>
+    <br><br>
+
+    <!-- Botão para salvar as respostas -->
+    <button onclick="salvarResposta()">Enviar Resposta</button>
+    <br><br>
+
+    <!-- Botão para apagar todas as respostas -->
+    <button onclick="apagarTodasRespostas()">Apagar Todas as Respostas</button>
+    <br><br>
+
+    <!-- Exibe mensagens salvas -->
+    <h2>Respostas Armazenadas:</h2>
+    <ul id="respostasArmazenadas"></ul>
+
+    <script>
+        // Função para salvar a resposta no localStorage
+        function salvarResposta() {
+            var numero = document.getElementById("whatsapp").value;
+            var situacao = document.getElementById("situacao").value;
+
+            if (numero == "") {
+                alert("Por favor, insira seu número de telefone.");
+                return;
+            }
+
+            // Cria um objeto com a resposta do usuário
+            var respostaObjeto = {
+                numero: numero,
+                situacao: situacao,
+                data: new Date().toLocaleString()
+            };
+
+            // Pega as respostas armazenadas no localStorage, se houver
+            var respostas = JSON.parse(localStorage.getItem("respostas")) || [];
+
+            // Adiciona a nova resposta ao array
+            respostas.push(respostaObjeto);
+
+            // Armazena as respostas de volta no localStorage
+            localStorage.setItem("respostas", JSON.stringify(respostas));
+
+            // Limpa os campos de entrada
+            document.getElementById("whatsapp").value = "";
+            document.getElementById("situacao").value = "sim"; // Reseta para a primeira opção
+
+            // Exibe as respostas armazenadas
+            exibirRespostas();
+        }
+
+        // Função para exibir as respostas armazenadas
+        function exibirRespostas() {
+            var respostas = JSON.parse(localStorage.getItem("respostas")) || [];
+            var ul = document.getElementById("respostasArmazenadas");
+            ul.innerHTML = ""; // Limpa a lista de respostas
+
+            // Adiciona cada resposta à lista
+            respostas.forEach(function(resposta, index) {
+                var li = document.createElement("li");
+                li.innerHTML = `
+                    <strong>Número:</strong> ${resposta.numero} <br>
+                    <strong>Votação:</strong> ${resposta.situacao} <br>
+                    <strong>Enviado em:</strong> ${resposta.data} <br>
+                    <button onclick="apagarResposta(${index})">Apagar</button><br><br>
+                `;
+                ul.appendChild(li);
+            });
+        }
+
+        // Função para apagar uma resposta específica
+        function apagarResposta(index) {
+            // Pega as respostas armazenadas no localStorage
+            var respostas = JSON.parse(localStorage.getItem("respostas")) || [];
+
+            // Remove a resposta do array
+            respostas.splice(index, 1);
+
+            // Armazena as respostas de volta no localStorage
+            localStorage.setItem("respostas", JSON.stringify(respostas));
+
+            // Exibe as respostas atualizadas
+            exibirRespostas();
+        }
+
+        // Função para apagar todas as respostas armazenadas
+        function apagarTodasRespostas() {
+            // Limpa todas as respostas do localStorage
+            localStorage.removeItem("respostas");
+
+            // Exibe a lista de respostas (que estará vazia)
+            exibirRespostas();
+        }
+
+        // Exibe as respostas armazenadas quando a página carregar
+        window.onload = function() {
+            exibirRespostas();
+        };
+    </script>
+    <h2>Muito obrigado linda!</h2>
+</body>
+</html>
